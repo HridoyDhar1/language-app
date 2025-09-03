@@ -49,6 +49,13 @@ dependencies:
   get_storage: ^2.1.1
   flutter_stripe: ^12.0.2
   http: ^1.5.0
+  provider: ^6.1.5+1
+  permission_handler: ^12.0.1
+  package_info_plus: ^8.3.1
+  flutter_voximplant: ^3.14.0
+  hive_flutter: ^1.1.0
+
+
 
 dev_dependencies:
   flutter_test:

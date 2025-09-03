@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../models/language_model.dart';
+import '../../feature/student/data/models/language_model.dart';
 
 abstract class LanguageState extends Equatable {
   @override

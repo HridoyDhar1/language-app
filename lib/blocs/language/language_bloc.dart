@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'language_event.dart';
 import 'language_state.dart';
-import '../../models/language_model.dart';
+import '../../feature/student/data/models/language_model.dart';
 
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
   LanguageBloc() : super(LanguageInitial()) {
