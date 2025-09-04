@@ -55,8 +55,6 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/models/booking_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class BookingController extends GetxController {
   final bookings = <Booking>[].obs;

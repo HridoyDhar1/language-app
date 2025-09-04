@@ -45,7 +45,7 @@ dependencies:
   firebase_core: ^4.1.0
   firebase_auth: ^6.0.2
   cloud_firestore: ^6.0.1
-  meet_hour: ^5.0.31
+
   get_storage: ^2.1.1
   flutter_stripe: ^12.0.2
   http: ^1.5.0
