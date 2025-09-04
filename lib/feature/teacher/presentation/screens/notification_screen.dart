@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:languageapp/feature/teacher/data/models/notification_model.dart';
 
@@ -7,6 +8,7 @@ class NotificationScreen extends StatelessWidget {
 static const String name='notificaton_screen';
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),

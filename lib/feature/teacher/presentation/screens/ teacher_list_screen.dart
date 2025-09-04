@@ -97,13 +97,16 @@ class _TeacherListScreenState extends State<TeacherListScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              teacher.name,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                teacher.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 4),
                             Text(

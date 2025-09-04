@@ -1,57 +1,5 @@
-// import 'package:get/get.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'booking_model.dart';
 
-// class BookingController extends GetxController {
-//   final bookings = <Booking>[].obs;
-
-//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-//   @override
-//   void onInit() {
-//     super.onInit();
-//     fetchBookings();
-//   }
-
-//   // Add booking locally + Firestore
-//   void addBooking(Booking booking) {
-//     bookings.add(booking);
-
-//     _firestore.collection('bookings').add({
-//       'teacherName': booking.teacherName,
-//       'language': booking.language,
-//       'date': booking.date,
-//       'time': booking.time,
-//       'price': booking.price,
-//       'timestamp': FieldValue.serverTimestamp(),
-//     }).then((docRef) {
-//       print("Booking saved with ID: ${docRef.id}");
-//     }).catchError((error) {
-//       print("Error adding booking: $error");
-//     });
-//   }
-
-//   // Fetch bookings from Firestore in real-time
-//   void fetchBookings() {
-//     _firestore
-//         .collection('bookings')
-//         .orderBy('timestamp', descending: true)
-//         .snapshots()
-//         .listen((snapshot) {
-//       bookings.value = snapshot.docs.map((doc) {
-//         return Booking(
-//           teacherName: doc['teacherName'] ?? '',
-//           language: doc['language'] ?? '',
-//           date: doc['date'] ?? '',
-//           time: doc['time'] ?? '',
-//           price: (doc['price'] ?? 0).toDouble(), teacherId: '',
-//         );
-//       }).toList();
-//     }, onError: (error) {
-//       print("Error fetching bookings: $error");
-//     });
-//   }
-// }
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/models/booking_model.dart';
@@ -59,6 +7,7 @@ import '../../data/models/booking_model.dart';
 class BookingController extends GetxController {
   final bookings = <Booking>[].obs;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
 
   @override
   void onInit() {
@@ -106,8 +55,14 @@ class BookingController extends GetxController {
 
   // Add booking locally + Firestore
   Future<void> addBooking(Booking booking) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      print("No logged-in teacher found.");
+      return;
+    }
     // Generate MeetHout meeting details
     final meetingDetails = await _generateMeetingLink(booking.teacherId);
+    final teacherId = currentUser.uid;
 
     // Create updated booking with meeting details
     final updatedBooking = Booking(
@@ -119,6 +74,7 @@ class BookingController extends GetxController {
       price: booking.price,
       meetingId: meetingDetails['meetingId'] ?? '',
       meetingLink: meetingDetails['meetingLink'] ?? '',
+
     );
 
     // Add to local list
@@ -135,6 +91,7 @@ class BookingController extends GetxController {
       'meetingId': updatedBooking.meetingId,
       'meetingLink': updatedBooking.meetingLink,
       'timestamp': FieldValue.serverTimestamp(),
+
     }).then((docRef) {
       print("Booking saved with ID: ${docRef.id}");
     }).catchError((error) {
@@ -144,8 +101,10 @@ class BookingController extends GetxController {
 
   // Fetch bookings from Firestore in real-time
   void fetchBookings() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
     _firestore
-        .collection('bookings')
+        .collection('bookings') .where('teacherId', isEqualTo: currentUser.uid)
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((snapshot) {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:languageapp/feature/student/presentation/widgets/animated_date_selector.dart';
@@ -41,7 +42,7 @@ class _BookingScreenState extends State<BookingScreen> with TickerProviderStateM
   late AnimationController _dateAnimationController;
   late Animation<Offset> _dateSlideAnimation;
   late Animation<double> _dateFadeAnimation;
-
+  final currentUser = FirebaseAuth.instance.currentUser;
   late AnimationController _slotAnimationController;
 
   @override
@@ -109,7 +110,7 @@ class _BookingScreenState extends State<BookingScreen> with TickerProviderStateM
       ),
     );
 
-    if (paymentResult == true) {
+    if (paymentResult == true&&currentUser!=null) {
       final booking = Booking(
         teacherId: teacher.id,
         teacherName: teacher.name,
@@ -129,13 +130,15 @@ class _BookingScreenState extends State<BookingScreen> with TickerProviderStateM
           'amount': booking.price,
           'date': Timestamp.now(),
           'status': 'Paid',
-        });
+
+        });final currentUser = FirebaseAuth.instance.currentUser;
           await FirebaseFirestore.instance.collection('notifications').add({
     'title': 'Booking Confirmed',
     'message': 'You booked ${teacher.name} on $day at $selectedTime',
     'timestamp': Timestamp.now(),
+            'userId': currentUser!.uid,
   });
- 
+
         showDialog(
           context: context,
           barrierDismissible: false,

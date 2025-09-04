@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:languageapp/feature/booking/data/models/booking_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../student/presentation/screens/student/chat_screen.dart';
+
 class StudentBookingDetails extends StatefulWidget {
   final Booking booking;
 
@@ -16,7 +18,23 @@ class _StudentBookingDetailsState extends State<StudentBookingDetails>
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
-
+  Future<void> _startVideoCall() async {
+    final meetingLink = widget.booking.meetingLink;
+    if (meetingLink.isNotEmpty) {
+      final Uri url = Uri.parse(meetingLink);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch MeetHout video call')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Meeting link not available yet')),
+      );
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -80,7 +98,7 @@ class _StudentBookingDetailsState extends State<StudentBookingDetails>
   @override
   Widget build(BuildContext context) {
     final booking = widget.booking;
-
+    final hasMeetingLink = widget.booking.meetingLink.isNotEmpty;
     return Scaffold(
       backgroundColor: const Color(0xffF7FAFF),
       body: FadeTransition(
@@ -145,9 +163,7 @@ class _StudentBookingDetailsState extends State<StudentBookingDetails>
                                     horizontal: 20, vertical: 12),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12))),
-                            onPressed: () {
-                              // _callTeacher(booking.teacherPhone);
-                            },
+                            onPressed: hasMeetingLink ? _startVideoCall : null,
                             icon: const Icon(Icons.call),
                             label: const Text(
                               "Call",
@@ -162,10 +178,19 @@ class _StudentBookingDetailsState extends State<StudentBookingDetails>
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12))),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                    receiverId: widget.booking.teacherId,
+                                    receiverName: widget.booking.teacherName,
+                                    bookingId: widget.booking.teacherId,
+                                  ),
+                                ),
+                              );
                             },
                             child: const Text(
-                              "Back",
+                              "Message",
                               style: TextStyle(fontSize: 16,color: Colors.white),
                             ),
                           ),
